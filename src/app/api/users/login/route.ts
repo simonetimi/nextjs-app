@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import { NextRequest, NextResponse } from 'next/server';
+
 import { connect } from '@/db/db-config';
 import type { UserInt } from '@/models/user';
 import User from '@/models/user';
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // create a token for authenticating the user
-    const tokenData: object = {
+    const tokenData = {
       id: user._id,
       username: user.username,
       email: user.email,

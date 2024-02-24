@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
+import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+
 import InputField from '../ui/signup/input';
-import { toast, Toaster } from 'react-hot-toast';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -22,9 +23,9 @@ export default function SignupPage() {
       const response = await axios.post('api/users/signup', user);
       toast.dismiss(loadingToast);
       if (response.status === 200) {
-        toast.success('Signed up!');
+        const successToast = toast.success('Signed up!');
         setTimeout(() => {
-          toast.dismiss(loadingToast);
+          toast.dismiss(successToast);
           router.push('/login');
         }, 1000);
       } else {

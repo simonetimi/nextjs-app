@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
+import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+
 import InputField from '../ui/signup/input';
-import { toast, Toaster } from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,9 +23,10 @@ export default function LoginPage() {
       const response = await axios.post('api/users/login', user);
       toast.dismiss(loadingToast);
       if (response.status === 200) {
-        toast.success('Login successful!');
+        const successToast = toast.success('Login successful!');
         setTimeout(() => {
-          router.push('/profile');
+          toast.dismiss(successToast);
+          router.push(`/`);
         }, 1000);
       } else {
         toast.error('An unexpected error occurred. Please try again.');

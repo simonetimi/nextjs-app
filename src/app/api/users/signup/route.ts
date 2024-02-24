@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { genSalt, hash } from 'bcrypt';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { connect } from '@/db/db-config';
 import type { UserInt } from '@/models/user';
 import User from '@/models/user';
