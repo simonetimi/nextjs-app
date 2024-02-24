@@ -22,8 +22,7 @@ export default function LoginPage() {
       const response = await axios.post('api/users/login', user);
       toast.dismiss(loadingToast);
       if (response.status === 200) {
-        const data = response.data;
-        toast.success(data.message || 'Login successful! Redirecting...');
+        toast.success('Login successful!');
         setTimeout(() => {
           router.push('/profile');
         }, 1000);

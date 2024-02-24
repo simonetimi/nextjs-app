@@ -22,8 +22,7 @@ export default function SignupPage() {
       const response = await axios.post('api/users/signup', user);
       toast.dismiss(loadingToast);
       if (response.status === 200) {
-        const data = response.data;
-        toast.success(data.message || 'Signed up! Redirecting...');
+        toast.success('Signed up!');
         setTimeout(() => {
           toast.dismiss(loadingToast);
           router.push('/login');

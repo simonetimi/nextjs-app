@@ -19,12 +19,12 @@ export async function POST(request: NextRequest) {
     // check if user exists
     const user: UserInt | null = await User.findOne({ email });
     if (!user) {
-      return Response.json({ error: 'User not found' }, { status: 400 });
+      return NextResponse.json({ error: 'User not found' }, { status: 400 });
     }
 
     // typing check for password
     if (typeof user.password !== 'string') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Invalid password format' },
         { status: 500 },
       );
@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     if (error instanceof Error) {
-      return Response.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return Response.json({ error: 'Unknown error' }, { status: 500 });
+    return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
   }
 }

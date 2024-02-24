@@ -42,15 +42,15 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
     })) as UserInt;
     const savedUser = await newUser.save();
-    return Response.json({
+    return NextResponse.json({
       message: 'User created successfully',
       success: true,
       savedUser,
     });
   } catch (error) {
     if (error instanceof Error) {
-      return Response.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return Response.json({ error: 'Unknown error' }, { status: 500 });
+    return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
   }
 }
