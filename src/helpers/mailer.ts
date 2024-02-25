@@ -35,7 +35,9 @@ export async function sendEmail(
         now - user.lastForgotPasswordTokenRequest < 180000
       ) {
         // 180000 ms = 3 minutes
-        throw new Error('Please wait before requesting a new verify token.');
+        throw new Error(
+          'Please wait before requesting a new password reset token.',
+        );
       }
       await User.findByIdAndUpdate(userId, {
         forgotPasswordToken: hashedToken,
@@ -58,7 +60,7 @@ export async function sendEmail(
       to: email,
       subject:
         emailType === 'verify' ? 'Verify your email' : 'Reset your password',
-      html: `<p>Click <a href="${process.env.DOMAIN}/verify-email?token=${hashedToken}">here</a> to ${emailType === 'verify' ? 'verify your email' : 'reset your password'}.</p>`,
+      html: `<p>Click <a href="${process.env.DOMAIN}/${emailType === 'verify' ? 'verify-email' : 'password-reset'}?token=${hashedToken}">here</a> to ${emailType === 'verify' ? 'verify your email' : 'reset your password'}.</p>`,
     };
     const mailResponse = await transporter.sendMail(mailOptions);
     return mailResponse;
