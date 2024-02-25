@@ -52,28 +52,28 @@ export default function VerifyEmailPage() {
   return (
     <main className=" flex h-screen flex-col items-center justify-center">
       <Toaster />
-      <h1 className="mb-10 p-4 text-2xl">Verify Email</h1>
+      <h1 className="mb-10 p-4 text-2xl">
+        {verified
+          ? 'Congratulations, we verified your email!'
+          : 'Verifying your email...'}
+      </h1>
       {verified && (
         <>
-          <h2>Congratulations! You verified your email.</h2>
           <p>You&apos;re being redirected...</p>
           <p>
-            Click
+            Click&nbsp;
             <Link className="underline" href="/login">
               here
             </Link>
-            if you&apos;re not being redirected automatically.
+            &nbsp;if you&apos;re not being redirected automatically.
           </p>
         </>
       )}
       {error && (
-        <>
-          <h2>
-            Oops! There was a problem verifying your email or your email was
-            already verified.
-          </h2>
-          <p></p>
-        </>
+        <p>
+          Oops! There was a problem verifying your email or your email was
+          already verified.
+        </p>
       )}
     </main>
   );

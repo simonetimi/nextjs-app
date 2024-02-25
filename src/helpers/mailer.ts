@@ -9,20 +9,41 @@ export async function sendEmail(
   userId: string,
 ) {
   try {
+    const user = await User.findById(userId);
+    const now = Date.now();
+
     // hash id to create a token (for email verification or password reset)
     const hashedToken = crypto.randomBytes(128).toString('hex');
-
     if (emailType === 'verify') {
+      // check if last verify request was made within 3 minutes and throw an error if condition is met
+      if (
+        user.lastVerifyTokenRequest &&
+        now - user.lastVerifyTokenRequest < 180000
+      ) {
+        // 180000 ms = 3 minutes
+        throw new Error('Please wait before requesting a new verify token.');
+      }
       await User.findByIdAndUpdate(userId, {
         verifyToken: hashedToken,
-        verifyTokenExpiry: Date.now() + 86400000, // 24 hours
+        verifyTokenExpiry: now + 86400000, // 24 hours
+        lastVerifyTokenRequest: now, // Update the last request timestamp
       });
     } else if (emailType === 'reset') {
+      // check if last password reset request was made within 3 minutes and throw an error if condition is met
+      if (
+        user.lastForgotPasswordTokenRequest &&
+        now - user.lastForgotPasswordTokenRequest < 180000
+      ) {
+        // 180000 ms = 3 minutes
+        throw new Error('Please wait before requesting a new verify token.');
+      }
       await User.findByIdAndUpdate(userId, {
         forgotPasswordToken: hashedToken,
-        forgotPasswordTokenExpiry: Date.now() + 14400000, // 4 hours
+        forgotPasswordTokenExpiry: now + 14400000, // 4 hours
+        lastForgotPasswordTokenRequest: now,
       });
     }
+
     // nodemailer transporter with options
     const transporter = nodemailer.createTransport({
       host: 'sandbox.smtp.mailtrap.io',

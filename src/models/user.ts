@@ -5,12 +5,14 @@ export interface UserInt extends Document {
   username: string;
   email: string;
   password: string;
-  isVerified?: boolean;
-  isAdmin?: boolean;
+  isVerified: boolean;
+  isAdmin: boolean;
   forgotPasswordToken?: string;
   forgotPasswordTokenExpiry?: Date;
+  lastForgotPasswordTokenRequest?: Date;
   verifyToken?: string;
   verifyTokenExpiry?: Date;
+  lastVerifyTokenRequest?: Date;
 }
 
 const userSchema = new mongoose.Schema({
@@ -35,8 +37,10 @@ const userSchema = new mongoose.Schema({
   },
   forgotPasswordToken: String,
   forgotPasswordTokenExpiry: Date,
+  lastPasswordTokenRequest: Date,
   verifyToken: String,
   verifyTokenExpiry: Date,
+  lastVerifyTokenRequest: Date,
 });
 
 const User =
