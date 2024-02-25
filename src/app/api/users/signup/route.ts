@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { connect } from '@/db/db-config';
+import { sendEmail } from '@/helpers/mailer';
 import type { UserInt } from '@/models/user';
 import User from '@/models/user';
 
@@ -43,6 +44,10 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
     })) as UserInt;
     const savedUser = await newUser.save();
+
+    // send verification email
+    await sendEmail(savedUser.email, 'verify', savedUser._id);
+
     return NextResponse.json({
       message: 'User created successfully',
       success: true,
