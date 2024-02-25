@@ -6,7 +6,7 @@ import { sendEmail } from '@/helpers/mailer';
 import User from '@/models/user';
 
 const inputSchema = object({
-  email: string().email().lowercase().trim().min(7).max(32).required(),
+  email: string().email().lowercase().trim().min(4).max(254).required(),
 });
 
 export async function POST(request: NextRequest) {

@@ -65,8 +65,8 @@ export default function LoginPage() {
           <InputField
             id="email"
             type="email"
-            min={7}
-            max={32}
+            min={4}
+            max={254}
             value={email}
             placeholder="Your email"
             onChange={handleOnChangeEmail}

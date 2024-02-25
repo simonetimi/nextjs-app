@@ -20,11 +20,11 @@ const lowercaseRegex = /[a-z]/; // Matches lowercase letters
 const uppercaseRegex = /[A-Z]/; // Matches uppercase letters
 
 const inputSchema = object({
-  email: string().email().lowercase().trim().min(7).max(32).required(),
+  email: string().email().lowercase().trim().min(4).max(254).required(),
   password: string()
     .trim()
     .min(6)
-    .max(32)
+    .max(256)
     .matches(
       specialCharRegex,
       'Password must contain at least one special character',

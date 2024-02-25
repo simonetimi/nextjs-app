@@ -78,8 +78,8 @@ export default function LoginPage() {
           <InputField
             id="email"
             type="email"
-            min={7}
-            max={32}
+            min={4}
+            max={254}
             value={user.email}
             placeholder="Your email"
             onChange={handleOnChangeEmail}
@@ -92,7 +92,7 @@ export default function LoginPage() {
             id="password"
             type="password"
             min={6}
-            max={32}
+            max={256}
             value={user.password}
             placeholder="Your password"
             onChange={handleOnChangePassword}
