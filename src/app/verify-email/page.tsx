@@ -22,7 +22,7 @@ export default function VerifyEmailPage() {
       setTimeout(() => {
         toast.dismiss(successToast);
         router.push('/login');
-      }, 5000);
+      }, 7000);
     } catch (error) {
       setError(true);
       toast.dismiss(loadingToast);
@@ -39,7 +39,7 @@ export default function VerifyEmailPage() {
   // grab the token from the URL param at component load
   useEffect(() => {
     const urlToken = window.location.search.split('=')[1];
-    setToken(urlToken);
+    setToken(urlToken || '');
   }, []);
 
   // call verifyEmail when component loads or when token changes
@@ -56,10 +56,23 @@ export default function VerifyEmailPage() {
       {verified && (
         <>
           <h2>Congratulations! You verified your email.</h2>
+          <p>You&apos;re being redirected...</p>
           <p>
-            You&apos;re being redirected. Click <Link href="/login">here</Link>{' '}
-            if you&apos;re not being redirected automatically.{' '}
+            Click
+            <Link className="underline" href="/login">
+              here
+            </Link>
+            if you&apos;re not being redirected automatically.
           </p>
+        </>
+      )}
+      {error && (
+        <>
+          <h2>
+            Oops! There was a problem verifying your email or your email was
+            already verified.
+          </h2>
+          <p></p>
         </>
       )}
     </main>

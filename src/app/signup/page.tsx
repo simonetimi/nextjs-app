@@ -105,7 +105,7 @@ export default function SignupPage() {
           <InputField
             id="password"
             type="password"
-            min={1}
+            min={6}
             value={user.password}
             placeholder="Your password"
             onChange={handleOnChangePassword}

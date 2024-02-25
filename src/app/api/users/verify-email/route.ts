@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
       verifyTokenExpiry: { $gt: Date.now() },
     });
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid verification token' },
+        { status: 400 },
+      );
     }
 
     // verified, remove the token from the db entry

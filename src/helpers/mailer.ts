@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
 import User from '@/models/user';
@@ -10,7 +10,8 @@ export async function sendEmail(
 ) {
   try {
     // hash id to create a token (for email verification or password reset)
-    const hashedToken = await bcrypt.hash(userId.toString(), 12);
+    const hashedToken = crypto.randomBytes(128).toString('hex');
+
     if (emailType === 'verify') {
       await User.findByIdAndUpdate(userId, {
         verifyToken: hashedToken,
