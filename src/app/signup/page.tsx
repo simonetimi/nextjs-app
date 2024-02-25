@@ -18,8 +18,8 @@ export default function SignupPage() {
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const onSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
-    toast.dismiss();
     event.preventDefault();
+    toast.dismiss();
     setButtonDisabled(true);
     const loadingToast = toast.loading('Signing up...');
     try {

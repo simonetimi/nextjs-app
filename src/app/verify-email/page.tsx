@@ -10,7 +10,6 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const [token, setToken] = useState('');
   const [verified, setVerified] = useState(false);
-  const [error, setError] = useState(false);
 
   const verifyEmail = async () => {
     const loadingToast = toast.loading('Verifying email...');
@@ -22,9 +21,8 @@ export default function VerifyEmailPage() {
       setTimeout(() => {
         toast.dismiss(successToast);
         router.push('/login');
-      }, 7000);
+      }, 5000);
     } catch (error) {
-      setError(true);
       toast.dismiss(loadingToast);
       if (axios.isAxiosError(error)) {
         const message =
@@ -68,12 +66,6 @@ export default function VerifyEmailPage() {
             &nbsp;if you&apos;re not being redirected automatically.
           </p>
         </>
-      )}
-      {error && (
-        <p>
-          Oops! There was a problem verifying your email or your email was
-          already verified.
-        </p>
       )}
     </main>
   );

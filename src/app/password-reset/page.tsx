@@ -6,25 +6,51 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import InputField from '../components/ui/Input';
+
 export default function PasswordResetPage() {
   const router = useRouter();
   const [token, setToken] = useState('');
-  const [verified, setVerified] = useState(false);
-  const [error, setError] = useState(false);
+  const [userInput, setUserInput] = useState({
+    password: '',
+    confirmPassword: '',
+  });
+  const [resetted, setResetted] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
-  const verifyEmail = async () => {
-    const loadingToast = toast.loading('Verifying email...');
+  const onChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setButtonDisabled(true);
+    toast.dismiss();
+
+    // check if passwords match
+    if (userInput.password !== userInput.confirmPassword) {
+      setButtonDisabled(false);
+      return toast.error("Passwords don't match!");
+    }
+
+    // check if token is empty
+    if (token.length < 1) {
+      setButtonDisabled(false);
+      return toast.error('Invalid token! Request a new link');
+    }
+
+    const loadingToast = toast.loading('Setting new password...');
     try {
-      await axios.post('/api/users/verify-email', { token });
-      setVerified(true);
+      await axios.post('/api/users/password-reset', {
+        token,
+        password: userInput.password,
+      });
+      setResetted(true);
       toast.dismiss(loadingToast);
-      const successToast = toast.success('Email verified!');
+      const successToast = toast.success('Password changed!');
       setTimeout(() => {
         toast.dismiss(successToast);
         router.push('/login');
-      }, 7000);
+      }, 5000);
+      setButtonDisabled(false);
     } catch (error) {
-      setError(true);
+      setButtonDisabled(false);
       toast.dismiss(loadingToast);
       if (axios.isAxiosError(error)) {
         const message =
@@ -36,28 +62,33 @@ export default function PasswordResetPage() {
     }
   };
 
+  const handleOnChangePassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setUserInput({ ...userInput, password: event.target.value });
+  };
+
+  const handleOnChangeConfirmPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setUserInput({ ...userInput, confirmPassword: event.target.value });
+  };
+
   // grab the token from the URL param at component load
   useEffect(() => {
     const urlToken = window.location.search.split('=')[1];
     setToken(urlToken || '');
   }, []);
 
-  // call verifyEmail when component loads or when token changes
-  useEffect(() => {
-    if (token.length > 0) {
-      verifyEmail();
-    }
-  }, [token]);
-
   return (
     <main className=" flex h-screen flex-col items-center justify-center">
       <Toaster />
       <h1 className="mb-10 p-4 text-2xl">
-        {verified
-          ? 'Congratulations, we verified your email!'
-          : 'Verifying your email...'}
+        {resetted
+          ? 'Congratulations, your new password has been set!'
+          : 'Set your new password'}
       </h1>
-      {verified && (
+      {resetted ? (
         <>
           <p>You&apos;re being redirected...</p>
           <p>
@@ -68,12 +99,45 @@ export default function PasswordResetPage() {
             &nbsp;if you&apos;re not being redirected automatically.
           </p>
         </>
-      )}
-      {error && (
-        <p>
-          Oops! There was a problem verifying your email or your email was
-          already verified.
-        </p>
+      ) : (
+        <form
+          className="flex flex-col items-center justify-center gap-6"
+          onSubmit={onChangePassword}
+        >
+          <label className="flex flex-col" htmlFor="password">
+            Password:
+            <InputField
+              id="password"
+              type="password"
+              min={6}
+              max={256}
+              value={userInput.password}
+              placeholder="Your password"
+              onChange={handleOnChangePassword}
+              required={true}
+            />
+          </label>
+          <label className="flex flex-col" htmlFor="confirmPassword">
+            Confirm password:
+            <InputField
+              id="confirmPassword"
+              type="password"
+              min={6}
+              max={256}
+              value={userInput.confirmPassword}
+              placeholder="Your password"
+              onChange={handleOnChangeConfirmPassword}
+              required={true}
+            />
+          </label>
+          <button
+            className="flex h-9 w-20 items-center justify-center rounded-md border border-white bg-black p-4 text-sm text-white hover:bg-white hover:text-black active:translate-y-1"
+            type="submit"
+            disabled={buttonDisabled}
+          >
+            Confirm
+          </button>
+        </form>
       )}
     </main>
   );
