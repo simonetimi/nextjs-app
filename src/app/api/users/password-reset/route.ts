@@ -10,31 +10,30 @@ const numberRegex = /\d/; // Matches numbers
 const lowercaseRegex = /[a-z]/; // Matches lowercase letters
 const uppercaseRegex = /[A-Z]/; // Matches uppercase letters
 
-const inputSchema = object({
-  password: string()
-    .min(6)
-    .max(256)
-    .matches(
-      specialCharRegex,
-      'Password must contain at least one special character',
-    )
-    .matches(numberRegex, 'Password must contain at least one number')
-    .matches(
-      lowercaseRegex,
-      'Password must contain at least one lowercase letter',
-    )
-    .matches(
-      uppercaseRegex,
-      'Password must contain at least one uppercase letter',
-    )
-    .required(),
-});
+const inputSchema = string()
+  .min(6)
+  .max(256)
+  .matches(
+    specialCharRegex,
+    'Password must contain at least one special character',
+  )
+  .matches(numberRegex, 'Password must contain at least one number')
+  .matches(
+    lowercaseRegex,
+    'Password must contain at least one lowercase letter',
+  )
+  .matches(
+    uppercaseRegex,
+    'Password must contain at least one uppercase letter',
+  )
+  .required();
 
 export async function POST(request: NextRequest) {
   try {
     await connect();
     const reqBody = await request.json();
-    const { token, password } = reqBody;
+    const { token, unparsedPassword } = reqBody;
+    const password = await inputSchema.validate(unparsedPassword);
 
     // look for a user with the given token and check if expired
     const user = await User.findOne({
@@ -49,6 +48,8 @@ export async function POST(request: NextRequest) {
     }
 
     // hash and salt password
+    const salt = await genSalt(12);
+    const hashedPassword = await hash(password, salt);
 
     // remove the token from the db entry and update password
     user.forgotPasswordToken = undefined;
