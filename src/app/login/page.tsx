@@ -15,9 +15,12 @@ export default function LoginPage() {
     password: '',
     username: '',
   });
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const onLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    toast.dismiss();
+    setButtonDisabled(true);
     const loadingToast = toast.loading('Logging in...');
     try {
       const response = await axios.post('api/users/login', user);
@@ -26,12 +29,14 @@ export default function LoginPage() {
         const successToast = toast.success('Login successful!');
         setTimeout(() => {
           toast.dismiss(successToast);
-          router.push(`/`);
+          router.push('/');
         }, 1000);
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }
+      setButtonDisabled(false);
     } catch (error) {
+      setButtonDisabled(false);
       toast.dismiss(loadingToast);
       if (axios.isAxiosError(error)) {
         const message =
@@ -97,6 +102,7 @@ export default function LoginPage() {
         <button
           className="flex h-9 w-20 items-center justify-center rounded-md border border-white bg-black p-4 text-sm text-white hover:bg-white hover:text-black active:translate-y-1"
           type="submit"
+          disabled={buttonDisabled}
         >
           Login
         </button>

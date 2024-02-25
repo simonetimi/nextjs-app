@@ -10,11 +10,14 @@ import InputField from '../components/ui/Input';
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const onRequestPasswordReset = async (
     event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
+    toast.dismiss();
+    setButtonDisabled(true);
     const loadingToast = toast.loading('Requesting...');
     try {
       const response = await axios.post('api/users/request-password-reset', {
@@ -30,7 +33,9 @@ export default function LoginPage() {
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }
+      setButtonDisabled(false);
     } catch (error) {
+      setButtonDisabled(false);
       toast.dismiss(loadingToast);
       if (axios.isAxiosError(error)) {
         const message =
@@ -71,6 +76,7 @@ export default function LoginPage() {
         <button
           className="flex h-9 w-20 items-center justify-center rounded-md border border-white bg-black p-4 text-sm text-white hover:bg-white hover:text-black active:translate-y-1"
           type="submit"
+          disabled={buttonDisabled}
         >
           Request
         </button>

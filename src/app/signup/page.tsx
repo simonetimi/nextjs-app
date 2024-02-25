@@ -15,9 +15,12 @@ export default function SignupPage() {
     password: '',
     username: '',
   });
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const onSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
+    toast.dismiss();
     event.preventDefault();
+    setButtonDisabled(true);
     const loadingToast = toast.loading('Signing up...');
     try {
       const response = await axios.post('api/users/signup', user);
@@ -31,7 +34,9 @@ export default function SignupPage() {
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }
+      setButtonDisabled(false);
     } catch (error) {
+      setButtonDisabled(false);
       toast.dismiss(loadingToast);
       if (axios.isAxiosError(error)) {
         const message =
@@ -119,6 +124,7 @@ export default function SignupPage() {
         <button
           className="flex h-9 w-20 items-center justify-center rounded-md border border-white bg-black p-4 text-sm text-white hover:bg-white hover:text-black active:translate-y-1"
           type="submit"
+          disabled={buttonDisabled}
         >
           Signup
         </button>
