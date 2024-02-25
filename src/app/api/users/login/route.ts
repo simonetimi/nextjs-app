@@ -14,7 +14,7 @@ interface ReqBody {
 
 const inputSchema = object({
   email: string().email().lowercase().trim().min(4).max(254).required(),
-  password: string().trim().min(6).max(256).required(),
+  password: string().min(6).max(256).required(),
 });
 
 export async function POST(request: NextRequest) {

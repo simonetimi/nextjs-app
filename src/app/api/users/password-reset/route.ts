@@ -12,7 +12,6 @@ const uppercaseRegex = /[A-Z]/; // Matches uppercase letters
 
 const inputSchema = object({
   password: string()
-    .trim()
     .min(6)
     .max(256)
     .matches(

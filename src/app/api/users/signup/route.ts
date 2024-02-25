@@ -39,7 +39,7 @@ const inputSchema = object({
       'Password must contain at least one uppercase letter',
     )
     .required(),
-  username: string().trim().min(3).max(32).required(),
+  username: string().min(3).max(32).required(),
 });
 
 export async function POST(request: NextRequest) {
