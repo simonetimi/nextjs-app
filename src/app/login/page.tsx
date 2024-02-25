@@ -6,7 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import InputField from '../ui/signup/input';
+import InputField from '../components/ui/Input';
 
 export default function LoginPage() {
   const router = useRouter();
