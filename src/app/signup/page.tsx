@@ -36,7 +36,8 @@ export default function SignupPage() {
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data.error || 'An error occurred. Please try again.';
-        toast.error(message);
+        const nicerMessage = `${message.charAt(0).toUpperCase()}${message.slice(1)}`;
+        toast.error(nicerMessage);
       } else if (error instanceof Error) {
         toast.error(error.message);
       }
@@ -81,7 +82,8 @@ export default function SignupPage() {
           <InputField
             id="username"
             type="text"
-            min={1}
+            min={3}
+            max={32}
             value={user.username}
             placeholder="Your username"
             onChange={handleOnChangeUsername}
@@ -93,7 +95,8 @@ export default function SignupPage() {
           <InputField
             id="email"
             type="email"
-            min={1}
+            min={7}
+            max={32}
             value={user.email}
             placeholder="Your email"
             onChange={handleOnChangeEmail}
@@ -106,6 +109,7 @@ export default function SignupPage() {
             id="password"
             type="password"
             min={6}
+            max={32}
             value={user.password}
             placeholder="Your password"
             onChange={handleOnChangePassword}

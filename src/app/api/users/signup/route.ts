@@ -1,6 +1,7 @@
 import { genSalt, hash } from 'bcrypt';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { object, string } from 'yup';
 
 import { connect } from '@/db/db-config';
 import { sendEmail } from '@/helpers/mailer';
@@ -13,13 +14,41 @@ interface ReqBody {
   password: string;
 }
 
+const specialCharRegex = /[^A-Za-z0-9]/; // Matches special characters
+const numberRegex = /\d/; // Matches numbers
+const lowercaseRegex = /[a-z]/; // Matches lowercase letters
+const uppercaseRegex = /[A-Z]/; // Matches uppercase letters
+
+const inputSchema = object({
+  email: string().email().lowercase().trim().min(7).max(32).required(),
+  password: string()
+    .trim()
+    .min(6)
+    .max(32)
+    .matches(
+      specialCharRegex,
+      'Password must contain at least one special character',
+    )
+    .matches(numberRegex, 'Password must contain at least one number')
+    .matches(
+      lowercaseRegex,
+      'Password must contain at least one lowercase letter',
+    )
+    .matches(
+      uppercaseRegex,
+      'Password must contain at least one uppercase letter',
+    )
+    .required(),
+  username: string().trim().min(3).max(32).required(),
+});
+
 export async function POST(request: NextRequest) {
   try {
     await connect();
     const reqBody = (await request.json()) as ReqBody;
-    const { username, email, password } = reqBody;
 
-    // check if email is correct
+    // validate and sanitize user data
+    const { username, email, password } = await inputSchema.validate(reqBody);
 
     // check if user exists
     const user = await User.findOne({

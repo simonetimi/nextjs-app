@@ -28,7 +28,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
-    "use-debounce": "^10.0.0"
+    "use-debounce": "^10.0.0",
+    "yup": "^1.3.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.1",

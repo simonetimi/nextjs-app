@@ -1,6 +1,7 @@
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
+import { object, string } from 'yup';
 
 import { connect } from '@/db/db-config';
 import type { UserInt } from '@/models/user';
@@ -11,11 +12,18 @@ interface ReqBody {
   password: string;
 }
 
+const inputSchema = object({
+  email: string().email().lowercase().trim().min(7).max(32).required(),
+  password: string().trim().min(6).max(32).required(),
+});
+
 export async function POST(request: NextRequest) {
   try {
     await connect();
     const reqBody = (await request.json()) as ReqBody;
-    const { email, password } = reqBody;
+
+    // validate and sanitize user data
+    const { email, password } = await inputSchema.validate(reqBody);
 
     // check if user exists
     const user: UserInt | null = await User.findOne({ email });

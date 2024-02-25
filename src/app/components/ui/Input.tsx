@@ -1,7 +1,8 @@
 interface InputField {
   id: string;
   type: string;
-  min: number;
+  min?: number;
+  max?: number;
   value: string;
   placeholder: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -12,6 +13,7 @@ export default function InputField({
   id,
   type,
   min,
+  max,
   value,
   placeholder,
   onChange,
@@ -23,6 +25,7 @@ export default function InputField({
       id={id}
       type={type}
       min={min}
+      max={max}
       value={value}
       placeholder={placeholder}
       onChange={onChange}
