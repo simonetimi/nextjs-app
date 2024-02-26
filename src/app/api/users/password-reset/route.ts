@@ -1,6 +1,6 @@
 import { genSalt, hash } from 'bcrypt';
 import { NextRequest, NextResponse } from 'next/server';
-import { object, string } from 'yup';
+import { string } from 'yup';
 
 import { connect } from '@/db/db-config';
 import User from '@/models/user';
@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
   try {
     await connect();
     const reqBody = await request.json();
-    const { token, unparsedPassword } = reqBody;
-    const password = await inputSchema.validate(unparsedPassword);
+    const { token, password } = reqBody;
+
+    const parsedPassword = await inputSchema.validate(password);
 
     // look for a user with the given token and check if expired
     const user = await User.findOne({
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     // hash and salt password
     const salt = await genSalt(12);
-    const hashedPassword = await hash(password, salt);
+    const hashedPassword = await hash(parsedPassword, salt);
 
     // remove the token from the db entry and update password
     user.forgotPasswordToken = undefined;

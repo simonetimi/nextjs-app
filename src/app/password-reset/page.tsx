@@ -38,7 +38,7 @@ export default function PasswordResetPage() {
     const loadingToast = toast.loading('Setting new password...');
     try {
       await axios.post('/api/users/password-reset', {
-        token,
+        token: token,
         password: userInput.password,
       });
       setResetted(true);

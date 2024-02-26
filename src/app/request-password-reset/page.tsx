@@ -78,7 +78,7 @@ export default function LoginPage() {
           type="submit"
           disabled={buttonDisabled}
         >
-          Request
+          Send
         </button>
       </form>
     </main>
