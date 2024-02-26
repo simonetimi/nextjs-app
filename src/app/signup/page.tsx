@@ -15,11 +15,16 @@ export default function SignupPage() {
     password: '',
     username: '',
   });
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const onSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     toast.dismiss();
+    if (user.password !== confirmPassword) {
+      setButtonDisabled(false);
+      return toast.error("Passwords don't match!");
+    }
     setButtonDisabled(true);
     const loadingToast = toast.loading('Signing up...');
     try {
@@ -74,6 +79,12 @@ export default function SignupPage() {
     });
   };
 
+  const handleOnChangeConfirmPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setConfirmPassword(event.target.value);
+  };
+
   return (
     <main className=" flex h-screen flex-col items-center justify-center">
       <Toaster />
@@ -118,6 +129,19 @@ export default function SignupPage() {
             value={user.password}
             placeholder="Your password"
             onChange={handleOnChangePassword}
+            required={true}
+          />
+        </label>
+        <label className="flex flex-col" htmlFor="confirmPassword">
+          Confirm password:
+          <InputField
+            id="confirmPassword"
+            type="password"
+            min={6}
+            max={256}
+            value={confirmPassword}
+            placeholder="Your password"
+            onChange={handleOnChangeConfirmPassword}
             required={true}
           />
         </label>
