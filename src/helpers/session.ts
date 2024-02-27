@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
 const secret = process.env.TOKEN_SECRET!;
@@ -7,19 +7,37 @@ export function updateSession(request: NextRequest) {
   try {
     const token = request.cookies.get('session')?.value;
     if (!token) {
-      throw new Error('Session not found. Log in first');
+      return NextResponse.json(
+        { error: 'Session not found. Log in first' },
+        { status: 401 },
+      );
     }
-    const decodedToken = jwt.verify(token, secret);
-    const updatedToken = jwt.sign(decodedToken, secret, { expiresIn: '1h' });
+    const decodedToken = jwt.verify(token, secret) as JwtPayload;
+    const newToken = {
+      id: decodedToken.id,
+      username: decodedToken.username,
+      email: decodedToken.email,
+      role: decodedToken.role,
+    };
+    const updatedToken = jwt.sign(newToken, secret, { expiresIn: '1h' });
     const response = NextResponse.json({
       message: 'Session updated',
       success: true,
     });
-    response.cookies.set('session', updatedToken, { httpOnly: true });
+    response.cookies.set('session', updatedToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+    });
     return response;
   } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json(
+        { error: 'Invalid session token. Log in again.' },
+        { status: 401 },
+      );
+    }
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
     return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
   }

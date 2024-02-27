@@ -9,8 +9,7 @@ interface User {
   username: string;
   email: string;
   password?: string;
-  isVerified?: boolean;
-  isAdmin?: boolean;
+  role: string;
 }
 
 export default function Profile() {

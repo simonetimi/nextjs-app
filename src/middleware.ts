@@ -5,9 +5,15 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // check if user is logged in or not (has token) and redirect to appropriate paths
-  const isPublicPath =
-    path === '/login' || path === '/signup' || path === '/verify-email';
-  const token = request.cookies.get('token');
+  const publicPaths = [
+    '/login',
+    '/signup',
+    '/verify-email',
+    '/password-reset',
+    '/request-password-reset',
+  ];
+  const isPublicPath = publicPaths.includes(path);
+  const token = request.cookies.get('session');
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL('/', request.nextUrl));
   }
@@ -17,5 +23,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/signup', '/profile/:id*', '/verify-email'],
+  matcher: [
+    '/',
+    '/login',
+    '/signup',
+    '/profile/:id*',
+    '/verify-email',
+    '/password-reset',
+    '/request-password-reset',
+  ],
 };

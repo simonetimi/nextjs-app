@@ -4,6 +4,8 @@ import { connect } from '@/db/db-config';
 import { extractId } from '@/helpers/extract-id';
 import User from '@/models/user';
 
+// Add additional data as needed, or consider new API paths for specific bits of user data
+
 export async function GET(request: NextRequest) {
   try {
     connect();

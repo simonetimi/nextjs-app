@@ -6,7 +6,6 @@ export interface UserInt extends Document {
   email: string;
   password: string;
   isVerified: boolean;
-  isAdmin: boolean;
   role: 'user' | 'admin';
   isBanned: boolean;
   forgotPasswordToken?: string;
@@ -40,7 +39,7 @@ const userSchema = new mongoose.Schema({
   },
   isBanned: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   forgotPasswordToken: String,
   forgotPasswordTokenExpiry: Date,
