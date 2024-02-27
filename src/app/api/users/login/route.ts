@@ -42,7 +42,11 @@ export async function POST(request: NextRequest) {
     // check if password is correct
     const validPassword = await compare(password, user.password);
     if (!validPassword) {
-      return Response.json({ error: 'Wrong password' }, { status: 400 });
+      return Response.json({ error: 'Wrong password' }, { status: 401 });
+    }
+
+    if (user.isBanned) {
+      return Response.json({ error: 'User is banned' }, { status: 403 });
     }
 
     // create a token for authenticating the user
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
       message: 'Login successful',
       success: true,
     });
-    response.cookies.set('token', token, { httpOnly: true });
+    response.cookies.set('session', token, { httpOnly: true });
     return response;
   } catch (error) {
     if (error instanceof Error) {
