@@ -10,7 +10,9 @@ export async function GET(request: NextRequest) {
   try {
     connect();
     const userId = await extractId(request);
-    const user = await User.findById({ _id: userId }).select('-password');
+    const user = await User.findById({ _id: userId }).select(
+      'username email bio',
+    );
     return NextResponse.json(
       { message: 'User found', user: user },
       { status: 200 },
