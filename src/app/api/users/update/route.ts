@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
       expiresIn: '1h',
     });
 
-    // set response
+    // after making the requesed changes to user data, send an updated token/cookie
     const response = NextResponse.json({
       message: 'Data updated successfully',
     });

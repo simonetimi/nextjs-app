@@ -219,9 +219,7 @@ export default function Profile() {
   return (
     <main className="flex h-5/6 flex-col items-center justify-center gap-3">
       <Toaster />
-      <h1 className="mb-10 p-4 text-2xl">
-        User Profile: {user ? `${user.username}` : 'Not found'}
-      </h1>
+      <h1 className="mb-10 p-4 text-2xl">Your user profile</h1>
       <h2>Edit user data</h2>
       <form
         className="flex flex-col items-center justify-center gap-6"
