@@ -1,5 +1,5 @@
 import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 import { object, string } from 'yup';
 
@@ -65,10 +65,13 @@ export async function POST(request: NextRequest) {
       email: user.email,
       role: user.role,
     };
-    const secret: string = process.env.TOKEN_SECRET!;
-    const token: string = sign(tokenData, secret, {
-      expiresIn: '1h',
-    });
+    const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
+    const alg = 'HS256';
+    const token: string = await new SignJWT(tokenData)
+      .setProtectedHeader({ alg })
+      .setExpirationTime('1h')
+      .sign(secret);
+
     const response = NextResponse.json({
       message: 'Login successful',
       success: true,

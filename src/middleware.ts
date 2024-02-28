@@ -1,12 +1,11 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { jwtVerify, SignJWT } from 'jose';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-
-const secret = process.env.TOKEN_SECRET!;
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const session = request.cookies.get('session')?.value;
+  const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
 
   // check if user is logged in or not (has token) and redirect to appropriate paths
   const publicPaths = [
@@ -25,25 +24,30 @@ export async function middleware(request: NextRequest) {
 
   if (session) {
     // decode token
-    const decodedSession = jwt.verify(session, secret) as JwtPayload;
+    const { payload } = await jwtVerify(session, secret);
     const newToken = {
-      id: decodedSession.id,
-      username: decodedSession.username,
-      email: decodedSession.email,
-      role: decodedSession.role,
+      id: payload.id,
+      username: payload.username,
+      email: payload.email,
+      role: payload.role,
     };
     // create refreshed token
-    const newSession = jwt.sign(newToken, secret, { expiresIn: '1h' });
+    const alg = 'HS256';
+    const newSession: string = await new SignJWT(newToken)
+      .setProtectedHeader({ alg })
+      .setExpirationTime('1h')
+      .sign(secret);
 
     // if logged user is accessing a public resource, redirect to the main app resource and refresh session
     if (isPublicPath) {
-      const url = new URL('/profile', request.nextUrl).toString();
-      const response = NextResponse.redirect(url);
+      const response = NextResponse.redirect(
+        new URL('/profile', request.nextUrl),
+      );
 
       // manually set the 'Set-Cookie' header for the redirect response
       response.headers.append(
         'Set-Cookie',
-        `session=${newSession}; HttpOnly; SameSite=Strict; Max-Age=5; Secure`,
+        `session=${newSession}; HttpOnly; SameSite=Strict; Max-Age=3600; Secure`,
       );
       return response;
     }
@@ -59,7 +63,7 @@ export async function middleware(request: NextRequest) {
       response.cookies.set('session', newSession, {
         httpOnly: true,
         sameSite: 'strict',
-        maxAge: 5, // 1 hour
+        maxAge: 3600, // 1 hour
         secure: true,
       });
 

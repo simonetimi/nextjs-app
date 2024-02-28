@@ -1,12 +1,13 @@
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 
-export function extractId(request: NextRequest) {
+export async function extractId(request: NextRequest) {
   try {
-    const token = request.cookies.get('session')?.value || '';
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
-    if (typeof decodedToken !== 'string' && 'id' in decodedToken) {
-      return decodedToken.id;
+    const session = request.cookies.get('session')?.value || '';
+    const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
+    const { payload } = await jwtVerify(session, secret);
+    if (typeof payload !== 'string' && 'id' in payload) {
+      return payload.id;
     }
   } catch (error) {
     if (error instanceof Error) {

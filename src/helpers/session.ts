@@ -1,17 +1,17 @@
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
 // this is a reference. when needed, build appropriate API routes
 
-const secret = process.env.TOKEN_SECRET!;
+const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
 
-export function compareId(request: NextRequest, paramId: string) {
+export async function compareId(request: NextRequest, paramId: string) {
   try {
     const session = request.cookies.get('session')?.value || '';
-    const decodedSession = jwt.verify(session, secret);
+    const { payload } = await jwtVerify(session, secret);
     let idFromSession = '';
-    if (typeof decodedSession !== 'string' && 'id' in decodedSession) {
-      idFromSession = decodedSession.id;
+    if (typeof payload !== 'string' && 'id' in payload) {
+      idFromSession = payload.id as string;
     }
     if (idFromSession !== paramId) {
       return NextResponse.json(
@@ -32,13 +32,13 @@ export function compareId(request: NextRequest, paramId: string) {
   }
 }
 
-export function checkRole(request: NextRequest, paramRole: string) {
+export async function checkRole(request: NextRequest, paramRole: string) {
   try {
     const session = request.cookies.get('session')?.value || '';
-    const decodedSession = jwt.verify(session, secret);
+    const { payload } = await jwtVerify(session, secret);
     let roleFromToken = '';
-    if (typeof decodedSession !== 'string' && 'role' in decodedSession) {
-      roleFromToken = decodedSession.role;
+    if (typeof payload !== 'string' && 'role' in payload) {
+      roleFromToken = payload.role as string;
     }
     if (roleFromToken !== paramRole) {
       return NextResponse.json(

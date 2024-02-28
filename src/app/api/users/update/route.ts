@@ -1,5 +1,5 @@
 import { genSalt, hash } from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { jwtVerify, SignJWT } from 'jose';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { object, string } from 'yup';
@@ -44,8 +44,6 @@ const inputSchema = object({
   bio: string().min(1).max(320),
 });
 
-const secret = process.env.TOKEN_SECRET!;
-
 export async function PUT(request: NextRequest) {
   try {
     // get session from cookies
@@ -60,11 +58,13 @@ export async function PUT(request: NextRequest) {
     // connect do db
     await connect();
 
+    const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
+
     // decode session
-    const decodedSession = jwt.verify(session, secret);
+    const { payload } = await jwtVerify(session, secret);
     let idFromSession = '';
-    if (typeof decodedSession !== 'string' && 'id' in decodedSession) {
-      idFromSession = decodedSession.id;
+    if (typeof payload !== 'string' && 'id' in payload) {
+      idFromSession = payload.id as string;
     }
 
     // extract form data from request validate and sanitize user data
@@ -77,15 +77,15 @@ export async function PUT(request: NextRequest) {
 
     // depending on data from form, update user
     if (username) {
-      if (typeof decodedSession !== 'string' && 'username' in decodedSession) {
-        decodedSession.username = username;
+      if (typeof payload !== 'string' && 'username' in payload) {
+        payload.username = username;
       }
       user.username = username;
       await user.save();
     }
     if (email) {
-      if (typeof decodedSession !== 'string' && 'email' in decodedSession) {
-        decodedSession.email = email;
+      if (typeof payload !== 'string' && 'email' in payload) {
+        payload.email = email;
       }
       user.email = email;
       user.isVerified = false;
@@ -95,8 +95,8 @@ export async function PUT(request: NextRequest) {
       await sendEmail(email, 'verify', idFromSession);
     }
     if (bio) {
-      if (typeof decodedSession !== 'string' && 'bio' in decodedSession) {
-        decodedSession.bio = bio;
+      if (typeof payload !== 'string' && 'bio' in payload) {
+        payload.bio = bio;
       }
       user.bio = bio;
       await user.save();
@@ -116,9 +116,11 @@ export async function PUT(request: NextRequest) {
       role: user.role,
     };
 
-    const newSession = jwt.sign(newToken, secret, {
-      expiresIn: '1h',
-    });
+    const alg = 'HS256';
+    const newSession: string = await new SignJWT(newToken)
+      .setProtectedHeader({ alg })
+      .setExpirationTime('1h')
+      .sign(secret);
 
     // after making the requesed changes to user data, send an updated token/cookie
     const response = NextResponse.json({
