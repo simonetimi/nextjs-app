@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     response.cookies.set('session', updatedSession, {
       httpOnly: true,
       sameSite: 'strict',
-      maxAge: 3, // 1 hour
+      maxAge: 3600, // 1 hour
       secure: true,
     });
     return response;
