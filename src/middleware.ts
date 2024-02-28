@@ -38,21 +38,15 @@ export async function middleware(request: NextRequest) {
       .setExpirationTime('1h')
       .sign(secret);
 
-    // if logged user is accessing a public resource, redirect to the main app resource and refresh session
+    // if logged user is accessing a public resource, redirect to the main app resource
     if (isPublicPath) {
       const response = NextResponse.redirect(
         new URL('/profile', request.nextUrl),
       );
-
-      // manually set the 'Set-Cookie' header for the redirect response
-      response.headers.append(
-        'Set-Cookie',
-        `session=${newSession}; HttpOnly; SameSite=Strict; Max-Age=3600; Secure`,
-      );
       return response;
     }
 
-    // if logged user is accessing a private resource, simply update the session without redirect
+    // if logged user is accessing a private resource, update the session without redirecting
     if (!isPublicPath) {
       const response = NextResponse.next();
 
