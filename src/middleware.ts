@@ -54,10 +54,7 @@ export async function middleware(request: NextRequest) {
 
     // if logged user is accessing a private resource, simply update the session without redirect
     if (!isPublicPath) {
-      const response = NextResponse.json({
-        message: 'Session updated',
-        success: true,
-      });
+      const response = NextResponse.next();
 
       // set the cookie using response
       response.cookies.set('session', newSession, {
