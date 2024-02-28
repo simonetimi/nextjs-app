@@ -16,6 +16,7 @@ export default function Profile() {
     email: '',
     bio: '',
   });
+  // fetch user info from database
   useEffect(() => {
     const getUserDetails = async () => {
       const response = await axios.get('/api/users/me');
@@ -219,7 +220,7 @@ export default function Profile() {
   return (
     <main className="flex h-5/6 flex-col items-center justify-center gap-3">
       <Toaster />
-      <h1 className="mb-10 p-4 text-2xl">Your user profile</h1>
+      <h1 className="mb-10 p-4 text-2xl">Your User Profile</h1>
       <h2>Edit user data</h2>
       <form
         className="flex flex-col items-center justify-center gap-6"
