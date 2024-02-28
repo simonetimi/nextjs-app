@@ -21,7 +21,9 @@ export async function sendEmail(
         now - user.lastVerifyTokenRequest < 180000
       ) {
         // 180000 ms = 3 minutes
-        throw new Error('Please wait before requesting a new verify token.');
+        throw new Error(
+          'Please wait before requesting a new email verification.',
+        );
       }
       await User.findByIdAndUpdate(userId, {
         verifyToken: hashedToken,

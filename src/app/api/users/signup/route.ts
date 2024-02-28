@@ -3,6 +3,12 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { object, string } from 'yup';
 
+import {
+  lowercaseRegex,
+  numberRegex,
+  specialCharRegex,
+  uppercaseRegex,
+} from '@/app/lib/regex';
 import { connect } from '@/db/db-config';
 import { sendEmail } from '@/helpers/mailer';
 import type { UserInt } from '@/models/user';
@@ -13,11 +19,6 @@ interface ReqBody {
   email: string;
   password: string;
 }
-
-const specialCharRegex = /[^A-Za-z0-9]/; // Matches special characters
-const numberRegex = /\d/; // Matches numbers
-const lowercaseRegex = /[a-z]/; // Matches lowercase letters
-const uppercaseRegex = /[A-Z]/; // Matches uppercase letters
 
 const inputSchema = object({
   email: string().email().lowercase().trim().min(4).max(254).required(),

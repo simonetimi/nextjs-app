@@ -76,6 +76,8 @@ export async function POST(request: NextRequest) {
     response.cookies.set('session', token, {
       httpOnly: true,
       sameSite: 'strict',
+      maxAge: 3600, // 1 hour
+      secure: true,
     });
     return response;
   } catch (error) {

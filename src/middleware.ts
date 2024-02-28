@@ -1,7 +1,8 @@
+import axios from 'axios';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // check if user is logged in or not (has token) and redirect to appropriate paths
@@ -13,11 +14,12 @@ export function middleware(request: NextRequest) {
     '/request-password-reset',
   ];
   const isPublicPath = publicPaths.includes(path);
-  const token = request.cookies.get('session');
-  if (isPublicPath && token) {
+  const session = request.cookies.get('session');
+
+  if (isPublicPath && session) {
     return NextResponse.redirect(new URL('/', request.nextUrl));
   }
-  if (!isPublicPath && !token) {
+  if (!isPublicPath && !session) {
     return NextResponse.redirect(new URL('/login', request.nextUrl));
   }
 }
