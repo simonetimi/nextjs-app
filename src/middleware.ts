@@ -63,14 +63,8 @@ export async function middleware(request: NextRequest) {
   }
 }
 
+// it runs on every route except for api, next static, next image
+
 export const config = {
-  matcher: [
-    '/',
-    '/login',
-    '/signup',
-    '/profile/:id*',
-    '/verify-email',
-    '/password-reset',
-    '/request-password-reset',
-  ],
+  matcher: ['/', '/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
