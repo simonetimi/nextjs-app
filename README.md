@@ -1,8 +1,8 @@
-## Fullstack App with Next.js
+# Fullstack App with Next.js
 
-Basic fullstack project with Authentication and MongoDB integration.
+A basic fullstack project with Authentication and MongoDB integration.
 
-# Features
+## Features
 
 - Typescript for secure typing
 - Tailwind CSS for uniform styling
@@ -13,3 +13,4 @@ Basic fullstack project with Authentication and MongoDB integration.
 - Use-debounce to avoid frequent fetching
 - Autoprefixer for vendor suffixes
 - Yup for validating and sanitizing data
+- Jose for handling JWT (supports Next.js middleware and JWT encryption)
