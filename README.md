@@ -1,6 +1,7 @@
 # Fullstack App with Next.js
 
-A basic fullstack project with Authentication and MongoDB integration.
+A full stack project template with Authentication and MongoDB integration.
+Connection with server is made with API routes and axios.
 
 ## Features
 
